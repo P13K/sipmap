@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Points d'eau</title>
+  <meta name="description" content="Les points d'eau potable OpenStreetMap autour de toi.">
+  <meta name="theme-color" content="#0b6bd3">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Figtree:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="map" aria-label="Carte des points d'eau potable"></div>
+
+  <header class="brand">
+    <div class="brand-mark">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5c3.6 4.6 6.5 8.4 6.5 12A6.5 6.5 0 0 1 5.5 14.5c0-3.6 2.9-7.4 6.5-12z"/></svg>
+      <span>Points d'eau</span>
+    </div>
+    <p class="brand-meta">
+      Données © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">contributeurs OpenStreetMap</a><span id="dataDate"></span>
+    </p>
+  </header>
+
+  <div id="notice" class="notice" role="status" hidden></div>
+
+  <section id="sheet" class="sheet" aria-label="Points d'eau les plus proches">
+    <button id="sheetToggle" class="sheet-head" type="button" aria-expanded="false" aria-controls="sheetBody">
+      <span class="sheet-heading">
+        <span class="sheet-title">Les plus proches</span>
+        <span class="sheet-sub" id="sheetSub">Recherche de ta position…</span>
+      </span>
+      <span class="sheet-first" id="sheetFirst"></span>
+      <svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg>
+    </button>
+    <div id="sheetBody" class="sheet-body" hidden>
+      <ol id="nearList" class="near"></ol>
+      <ul id="legend" class="legend" aria-label="Légende"></ul>
+    </div>
+  </section>
+
+  <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+name: Construire et publier la carte
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: "17 3 * * 1" # chaque lundi à 3 h 17 UTC
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      # Extraits Geofabrik à traiter (chemins de download.geofabrik.de, sans -latest.osm.pbf)
+      REGIONS: europe/spain europe/france
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Installer osmium
+        run: sudo apt-get update -q && sudo apt-get install -y -q osmium-tool
+
+      - name: Construire les données des points d'eau
+        run: bash scripts/build_data.sh
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
