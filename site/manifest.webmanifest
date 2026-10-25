@@ -1,6 +1,6 @@
 {
-  "name": "Points d'eau",
-  "short_name": "Points d'eau",
+  "name": "SipMap",
+  "short_name": "SipMap",
   "description": "Les points d'eau potable OpenStreetMap autour de toi.",
   "start_url": ".",
   "scope": ".",

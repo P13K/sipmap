@@ -9,7 +9,7 @@ set -euo pipefail
 REGIONS="${REGIONS:-europe/spain europe/france}"
 WORK="${WORK:-build}"
 OUT="${OUT:-site/data}"
-UA="points-eau-build (+https://github.com/${GITHUB_REPOSITORY:-local})"
+UA="sipmap-build (+https://github.com/${GITHUB_REPOSITORY:-local})"
 
 mkdir -p "$WORK"
 rm -rf "$OUT"

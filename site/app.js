@@ -1,4 +1,4 @@
-// Points d'eau — carte des points d'eau potable OpenStreetMap autour de soi.
+// SipMap — carte des points d'eau potable OpenStreetMap autour de soi.
 (() => {
   'use strict';
 
