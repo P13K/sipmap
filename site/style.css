@@ -1,4 +1,4 @@
-/* Carte plein écran ; l'interface flotte au-dessus en trois éléments : marque, contrôles, liste des plus proches. */
+/* Interface toujours claire, lisible en plein soleil. Carte plein écran ; l'interface flotte au-dessus en trois éléments : marque, contrôles, liste des plus proches. */
 :root {
   --bg: #eef3f6;
   --panel: rgba(255, 255, 255, 0.94);
@@ -13,20 +13,6 @@
   --font-ui: "Figtree", "Segoe UI", system-ui, -apple-system, sans-serif;
   --radius: 14px;
   color-scheme: light;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #0b131a;
-    --panel: rgba(18, 29, 39, 0.94);
-    --panel-solid: #121d27;
-    --ink: #e7eff5;
-    --muted: #93a6b4;
-    --line: #26343f;
-    --accent: #4aa3ff;
-    --accent-soft: #15304d;
-    --shadow: 0 6px 24px rgba(0, 0, 0, 0.45), 0 1px 3px rgba(0, 0, 0, 0.4);
-    color-scheme: dark;
-  }
 }
 
 * { box-sizing: border-box; }
@@ -84,10 +70,6 @@ button { font: inherit; color: inherit; }
 .maplibregl-ctrl-group button + button { border-top-color: var(--line); }
 .maplibregl-ctrl-attrib.maplibregl-compact { background: var(--panel-solid); color: var(--ink); }
 .maplibregl-ctrl-attrib a { color: var(--ink); }
-@media (prefers-color-scheme: dark) {
-  .maplibregl-ctrl button:not(.maplibregl-ctrl-geolocate-active) .maplibregl-ctrl-icon,
-  .maplibregl-ctrl-attrib-button { filter: invert(1) hue-rotate(180deg); }
-}
 
 /* Bandeau d'information */
 .notice {
@@ -223,6 +205,19 @@ button { font: inherit; color: inherit; }
 .card-dist { margin: 0; font-size: 13.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .card-facts { margin: 10px 0 0; padding: 0; list-style: none; display: grid; gap: 4px; font-size: 14px; }
 .card-facts li::before { content: "·"; margin-right: 6px; color: var(--accent); font-weight: 700; }
+.card-go {
+  display: block;
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 15px;
+  text-align: center;
+  text-decoration: none;
+}
+.card-go:hover { filter: brightness(1.08); }
 .card-link { display: inline-block; margin-top: 10px; font-size: 13.5px; font-weight: 600; text-decoration: none; }
 .card-link:hover { text-decoration: underline; }
 

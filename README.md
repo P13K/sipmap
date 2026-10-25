@@ -2,7 +2,7 @@
 
 A simple, beautiful map of drinking water points around you, straight from OpenStreetMap. Built for hikers, trail runners, runners and cyclists. No account, no tracking, no clutter.
 
-Une carte simple et belle des points d'eau potable OpenStreetMap autour de soi, pour les randonneurs, traileurs, coureurs et cyclistes. Pas de compte, pas d'itinéraire : la carte, ta position, les points les plus proches.
+Une carte simple et belle des points d'eau potable OpenStreetMap autour de soi, pour les randonneurs, traileurs, coureurs et cyclistes. Pas de compte : la carte, ta position, les points les plus proches, et un bouton pour s'y rendre avec Google Maps.
 
 ## Comment ça marche
 

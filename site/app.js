@@ -11,9 +11,20 @@
     puits:       { label: 'Puits',                      color: '#9a6b2f' },
     autre:       { label: "Point d'eau potable",        color: '#5f6f7d', short: 'Autre' },
   };
-  const STYLES = {
-    light: 'https://tiles.openfreemap.org/styles/liberty',
-    dark: 'https://tiles.openfreemap.org/styles/dark',
+  // Fond de carte OpenFreeMap « liberty », recoloré façon carte IGN : forêts vertes, eau bleue, sable jaune.
+  const STYLE_URL = 'https://tiles.openfreemap.org/styles/liberty';
+  const PALETTE = {
+    paper: '#f7f5ee',
+    forest: '#bfe0a0',
+    grass: '#dff0c8',
+    farmland: '#f2f1de',
+    sand: '#f7e8a0',
+    wetland: '#cfe8dc',
+    rock: '#e7e3dc',
+    ice: '#f3f9fd',
+    park: '#d3ecbd',
+    water: '#9dcff0',
+    waterLine: '#4f9fd8',
   };
   const DEFAULT_VIEW = { center: [2.95, 39.62], zoom: 9 }; // Majorque, si la position est refusée
   const MIN_DATA_ZOOM = 7;   // en dessous, on ne charge pas de nouvelles cellules
@@ -22,7 +33,6 @@
   const NEAREST_COUNT = 5;
 
   const $ = (id) => document.getElementById(id);
-  const darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const startedWithView = /^#\d/.test(location.hash); // lien partagé avec une vue précise
 
@@ -33,14 +43,48 @@
   let popup = null;
 
   // ---------- Carte ----------
+  // Démarre sur un fond uni, puis charge le vrai style recoloré.
   const map = new maplibregl.Map({
     container: 'map',
-    style: darkQuery.matches ? STYLES.dark : STYLES.light,
+    style: { version: 8, sources: {}, layers: [{ id: 'paper', type: 'background', paint: { 'background-color': PALETTE.paper } }] },
     center: DEFAULT_VIEW.center,
     zoom: DEFAULT_VIEW.zoom,
     hash: true,
     attributionControl: false,
   });
+
+  function ignify(style) {
+    const landcover = ['match', ['get', 'class'],
+      'wood', PALETTE.forest, 'grass', PALETTE.grass, 'farmland', PALETTE.farmland,
+      'sand', PALETTE.sand, 'wetland', PALETTE.wetland, 'rock', PALETTE.rock, 'ice', PALETTE.ice,
+      PALETTE.grass];
+    for (const layer of style.layers || []) {
+      const src = layer['source-layer'];
+      layer.paint = layer.paint || {};
+      if (layer.type === 'background') {
+        layer.paint['background-color'] = PALETTE.paper;
+      } else if (layer.type === 'fill' && src === 'water') {
+        layer.paint['fill-color'] = PALETTE.water;
+        layer.paint['fill-opacity'] = 1;
+      } else if (layer.type === 'fill' && src === 'landcover') {
+        delete layer.paint['fill-pattern'];
+        layer.paint['fill-color'] = landcover;
+        layer.paint['fill-opacity'] = 0.95;
+      } else if (layer.type === 'fill' && src === 'park') {
+        delete layer.paint['fill-pattern'];
+        layer.paint['fill-color'] = PALETTE.park;
+        layer.paint['fill-opacity'] = 0.7;
+      } else if (layer.type === 'line' && src === 'waterway') {
+        layer.paint['line-color'] = PALETTE.waterLine;
+      }
+    }
+    return style;
+  }
+
+  fetch(STYLE_URL)
+    .then((r) => r.json())
+    .then((style) => map.setStyle(ignify(style), { diff: false }))
+    .catch(() => map.setStyle(STYLE_URL, { diff: false }));
 
   const geolocate = new maplibregl.GeolocateControl({
     positionOptions: { enableHighAccuracy: true, timeout: 10000 },
@@ -146,10 +190,6 @@
   geolocate.on('error', () => {
     showNotice('Position indisponible : la liste se base sur le centre de la carte.', 5000);
     updateNearest();
-  });
-
-  darkQuery.addEventListener('change', (e) => {
-    map.setStyle(e.matches ? STYLES.dark : STYLES.light, { diff: false });
   });
 
   // ---------- Données ----------
@@ -352,6 +392,15 @@
       }
       root.append(ul);
     }
+
+    // Itinéraire à pied dans Google Maps (ouvre l'appli si elle est installée)
+    const go = document.createElement('a');
+    go.className = 'card-go';
+    go.href = `https://www.google.com/maps/dir/?api=1&destination=${coords[1]},${coords[0]}&travelmode=walking`;
+    go.target = '_blank';
+    go.rel = 'noopener';
+    go.textContent = 'Rejoindre ce point d’eau';
+    root.append(go);
 
     const id = String(p.i || '');
     const kindOsm = OSM_KIND[id[0]];
