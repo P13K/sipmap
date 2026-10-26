@@ -94,7 +94,7 @@
   });
   map.addControl(geolocate, 'top-right');
   map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
-  map.addControl(new maplibregl.AttributionControl({ compact: true }), 'top-right');
+  // Attribution : ligne discrète en bas de page (#credits), pas de cadre MapLibre.
 
   const typeColor = ['match', ['get', 't']];
   for (const [key, t] of Object.entries(TYPES)) typeColor.push(key, t.color);
@@ -228,7 +228,7 @@
       const r = await fetch('data/index.json', { cache: 'no-cache' });
       if (!r.ok) throw new Error(String(r.status));
       index = await r.json();
-      $('dataDate').textContent = ` · mis à jour le ${formatDate(index.generated)}`;
+      $('dataDate').textContent = ` · ${formatDate(index.generated)}`;
     } catch (_) {
       showNotice("Données indisponibles pour l'instant. Réessaie dans quelques minutes.");
     }
@@ -466,5 +466,72 @@
     return y && mo && d ? `${d}/${mo}/${y}` : '';
   }
 
-  // Appli installable : rien d'autre à faire tant qu'il n'y a pas de mode hors ligne.
+  // ---------- Menu ----------
+  const menuBtn = $('menuBtn');
+  const menu = $('menu');
+  function setMenu(open) {
+    menu.hidden = !open;
+    menuBtn.setAttribute('aria-expanded', String(open));
+  }
+  menuBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    setMenu(menu.hidden);
+  });
+  document.addEventListener('click', (e) => {
+    if (!menu.hidden && !menu.contains(e.target)) setMenu(false);
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') setMenu(false);
+  });
+
+  // ---------- Ajouter à l'écran d'accueil ----------
+  // Android / Chrome : vraie invite d'installation. iPhone / iPad : pas d'API, on affiche la marche à suivre.
+  let installPrompt = null;
+  const installBtn = $('installBtn');
+  const isStandalone = () => window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  if (isStandalone()) installBtn.hidden = true;
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    installPrompt = e;
+  });
+  window.addEventListener('appinstalled', () => {
+    installBtn.hidden = true;
+    installPrompt = null;
+  });
+
+  const SHARE_ICON = '<svg class="share-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M6 11v9h12v-9"/></svg>';
+  function showInstallHelp() {
+    const steps = $('installSteps');
+    if (isIOS) {
+      steps.innerHTML = `<p>Dans Safari :</p><ol>
+        <li>Touche le bouton Partager ${SHARE_ICON} en bas de l’écran.</li>
+        <li>Choisis « Sur l’écran d’accueil ».</li>
+        <li>Touche « Ajouter » en haut à droite.</li></ol>`;
+    } else {
+      steps.innerHTML = `<p>Dans le menu de ton navigateur :</p><ol>
+        <li>Ouvre le menu (⋮ ou ☰).</li>
+        <li>Choisis « Ajouter à l’écran d’accueil » ou « Installer l’application ».</li></ol>`;
+    }
+    const dialog = $('installDialog');
+    if (typeof dialog.showModal === 'function') dialog.showModal();
+    else dialog.setAttribute('open', '');
+  }
+  $('installClose').addEventListener('click', () => {
+    const dialog = $('installDialog');
+    if (typeof dialog.close === 'function') dialog.close();
+    else dialog.removeAttribute('open');
+  });
+
+  installBtn.addEventListener('click', async () => {
+    setMenu(false);
+    if (installPrompt) {
+      installPrompt.prompt();
+      try { await installPrompt.userChoice; } catch (_) { /* rien */ }
+      installPrompt = null;
+    } else {
+      showInstallHelp();
+    }
+  });
 })();

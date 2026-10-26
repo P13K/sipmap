@@ -31,30 +31,122 @@ button { font: inherit; color: inherit; }
 
 #map { position: fixed; inset: 0; }
 
-/* Marque */
-.brand {
+/* Barre du haut : bouton menu + marque, une seule pastille compacte */
+.topbar {
   position: absolute;
   top: calc(10px + env(safe-area-inset-top, 0px));
   left: calc(10px + env(safe-area-inset-left, 0px));
-  max-width: calc(100% - 84px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
-  padding: 9px 14px 9px 12px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 14px 4px 4px;
   background: var(--panel);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-radius: var(--radius);
+  border-radius: 999px;
   box-shadow: var(--shadow);
-  z-index: 2;
+  z-index: 4;
 }
+.icon-btn {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  background: none;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.icon-btn:hover, .icon-btn[aria-expanded="true"] { background: var(--accent-soft); }
+.icon-btn svg { width: 22px; height: 22px; fill: none; stroke: var(--ink); stroke-width: 2; stroke-linecap: round; }
 .brand-mark {
   display: flex;
   align-items: center;
-  gap: 7px;
-  font: 700 19px/1.1 var(--font-display);
+  gap: 6px;
+  font: 700 18px/1 var(--font-display);
   letter-spacing: -0.01em;
 }
-.brand-mark svg { width: 20px; height: 20px; fill: var(--accent); flex: none; }
-.brand-meta { margin: 3px 0 0; font-size: 11.5px; color: var(--muted); }
-.brand-meta a { color: inherit; }
+.brand-mark svg { width: 18px; height: 18px; fill: var(--accent); flex: none; }
+
+/* Menu déroulant */
+.menu {
+  position: absolute;
+  top: calc(62px + env(safe-area-inset-top, 0px));
+  left: calc(10px + env(safe-area-inset-left, 0px));
+  width: min(290px, calc(100% - 20px));
+  padding: 6px;
+  background: var(--panel-solid);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  z-index: 5;
+  display: grid;
+  gap: 2px;
+}
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 11px 12px;
+  background: none;
+  border: 0;
+  border-radius: 10px;
+  color: var(--ink);
+  font-weight: 500;
+  font-size: 15px;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+.menu-item:hover { background: var(--accent-soft); }
+.menu-item svg { width: 20px; height: 20px; flex: none; fill: none; stroke: var(--accent); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Fenêtre « Ajouter à l'écran d'accueil » */
+.dialog {
+  width: min(360px, calc(100% - 32px));
+  padding: 20px 20px 16px;
+  border: 0;
+  border-radius: 18px;
+  background: var(--panel-solid);
+  color: var(--ink);
+  box-shadow: var(--shadow);
+}
+.dialog::backdrop { background: rgba(15, 30, 42, 0.35); }
+.dialog h2 { margin: 0 0 10px; font: 700 19px/1.25 var(--font-display); text-wrap: balance; }
+.dialog p { margin: 0 0 10px; color: var(--muted); }
+.dialog ol { margin: 0 0 14px; padding-left: 22px; display: grid; gap: 8px; }
+.dialog-btn {
+  width: 100%;
+  padding: 11px;
+  background: var(--accent);
+  color: #fff;
+  border: 0;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.share-glyph { display: inline-block; width: 16px; height: 16px; vertical-align: -3px; fill: none; stroke: var(--accent); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Crédits : une ligne grise discrète tout en bas */
+.credits {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 0 max(12px, env(safe-area-inset-right, 0px)) calc(3px + env(safe-area-inset-bottom, 0px)) max(12px, env(safe-area-inset-left, 0px));
+  font-size: 10.5px;
+  line-height: 1.4;
+  color: rgba(15, 30, 42, 0.5);
+  text-align: right;
+  pointer-events: none;
+  z-index: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.credits a { color: inherit; text-decoration: none; pointer-events: auto; }
+.credits a:hover { text-decoration: underline; }
 
 /* Contrôles MapLibre */
 .maplibregl-ctrl-top-right {
@@ -68,13 +160,11 @@ button { font: inherit; color: inherit; }
 }
 .maplibregl-ctrl-group button { width: 40px; height: 40px; }
 .maplibregl-ctrl-group button + button { border-top-color: var(--line); }
-.maplibregl-ctrl-attrib.maplibregl-compact { background: var(--panel-solid); color: var(--ink); }
-.maplibregl-ctrl-attrib a { color: var(--ink); }
 
 /* Bandeau d'information */
 .notice {
   position: absolute;
-  top: calc(84px + env(safe-area-inset-top, 0px));
+  top: calc(64px + env(safe-area-inset-top, 0px));
   left: 50%;
   transform: translateX(-50%);
   width: max-content;
@@ -95,7 +185,7 @@ button { font: inherit; color: inherit; }
   position: absolute;
   left: calc(10px + env(safe-area-inset-left, 0px));
   right: calc(10px + env(safe-area-inset-right, 0px));
-  bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+  bottom: calc(22px + env(safe-area-inset-bottom, 0px));
   max-width: 400px;
   background: var(--panel);
   backdrop-filter: blur(10px);

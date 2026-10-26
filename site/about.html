@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>About SipMap</title>
+  <meta name="description" content="SipMap shows drinking water points around you on a clean map, using OpenStreetMap data. Built for hikers, trail runners, runners and cyclists.">
+  <meta name="theme-color" content="#0b6bd3">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Figtree:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Page de lecture : une colonne étroite, la carte se devine dans le bandeau du haut. */
+    html, body { height: auto; }
+    body { overflow: auto; background: var(--paper, #f7f5ee); }
+    :root { --paper: #f7f5ee; --forest: #bfe0a0; --sand: #f7e8a0; --water: #9dcff0; }
+    .band {
+      background:
+        radial-gradient(120% 140% at 0% 0%, var(--water) 0 34%, transparent 34.5%),
+        radial-gradient(90% 120% at 100% 10%, var(--forest) 0 38%, transparent 38.5%),
+        radial-gradient(70% 90% at 70% 120%, var(--sand) 0 40%, transparent 40.5%),
+        #dff0c8;
+      padding: calc(18px + env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) 0 max(16px, env(safe-area-inset-left, 0px));
+    }
+    .band-inner { max-width: 640px; margin: 0 auto; }
+    .back {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px 8px 10px;
+      background: var(--panel);
+      border-radius: 999px;
+      box-shadow: var(--shadow);
+      color: var(--ink);
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .back svg { width: 18px; height: 18px; fill: none; stroke: var(--ink); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .hero {
+      margin-top: 40px;
+      padding: 24px 24px 26px;
+      background: var(--panel-solid);
+      border-radius: 20px 20px 0 0;
+    }
+    .hero .brand-mark { font-size: 15px; color: var(--muted); }
+    .hero .brand-mark svg { width: 16px; height: 16px; }
+    h1 {
+      margin: 10px 0 10px;
+      font: 700 clamp(30px, 7vw, 42px)/1.05 var(--font-display);
+      letter-spacing: -0.02em;
+      text-wrap: balance;
+    }
+    .lead { margin: 0; font-size: 18px; line-height: 1.5; color: var(--ink); max-width: 34em; }
+    main {
+      padding: 0 max(16px, env(safe-area-inset-right, 0px)) calc(40px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+    }
+    .content {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 4px 24px 28px;
+      background: var(--panel-solid);
+      border-radius: 0 0 20px 20px;
+      box-shadow: 0 10px 30px rgba(15, 30, 42, 0.06);
+    }
+    section + section { border-top: 1px solid var(--line); }
+    section { padding: 22px 0; }
+    h2 { margin: 0 0 8px; font: 700 20px/1.25 var(--font-display); }
+    p { margin: 0 0 10px; line-height: 1.6; max-width: 62ch; }
+    ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; line-height: 1.5; }
+    .types { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+    .types li {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 5px 11px 5px 8px;
+      background: var(--bg);
+      border-radius: 999px;
+      font-size: 14px;
+    }
+    .types .dot { width: 11px; height: 11px; border-width: 1.5px; }
+    .warn {
+      padding: 14px 16px;
+      background: #fff6db;
+      border-radius: 12px;
+      color: #5c4710;
+    }
+    .warn h2 { color: #4a3808; }
+    .cta {
+      display: inline-block;
+      margin-top: 6px;
+      padding: 12px 18px;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 10px;
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .foot { max-width: 640px; margin: 16px auto 0; color: var(--muted); font-size: 13px; text-align: center; }
+    .foot a { color: inherit; }
+  </style>
+</head>
+<body>
+  <div class="band">
+    <div class="band-inner">
+      <a class="back" href="./">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+        Back to the map
+      </a>
+      <div class="hero">
+        <div class="brand-mark">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5c3.6 4.6 6.5 8.4 6.5 12A6.5 6.5 0 0 1 5.5 14.5c0-3.6 2.9-7.4 6.5-12z"/></svg>
+          <span>About SipMap</span>
+        </div>
+        <h1>Find drinking water near you, in one glance.</h1>
+        <p class="lead">SipMap is a simple map of public drinking water points. It is made for hikers, trail runners, runners and cyclists who need to refill on the go.</p>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <div class="content">
+      <section>
+        <h2>Why SipMap exists</h2>
+        <p>Volunteers around the world have already mapped countless fountains, taps and springs in OpenStreetMap. That data is good, but general-purpose map apps bury it among shops, roads and everything else.</p>
+        <p>SipMap shows only one thing: where you can drink. Open it, see the water around you, and go.</p>
+      </section>
+
+      <section>
+        <h2>What you will find on the map</h2>
+        <ul class="types">
+          <li><span class="dot" style="background:#0b6bd3"></span>Fountains</li>
+          <li><span class="dot" style="background:#0aa0c8"></span>Taps</li>
+          <li><span class="dot" style="background:#13926b"></span>Springs</li>
+          <li><span class="dot" style="background:#7a5cc9"></span>Toilets with drinking water</li>
+          <li><span class="dot" style="background:#0b3f86"></span>Refill points</li>
+          <li><span class="dot" style="background:#9a6b2f"></span>Wells</li>
+        </ul>
+        <p style="margin-top:12px">Only points that OpenStreetMap marks as drinking water are shown. Taps tagged as non-drinkable and private points are left out.</p>
+      </section>
+
+      <section>
+        <h2>How it works</h2>
+        <ul>
+          <li>Every week, SipMap downloads fresh OpenStreetMap data and keeps only the drinking water points.</li>
+          <li>Your location is used only in your browser to sort the nearest points. It is never sent or stored.</li>
+          <li>No account and no cookies.</li>
+          <li>One tap on a point opens a walking route to it in Google Maps.</li>
+          <li>Coverage today: France and Spain, including the Balearic Islands. More countries will follow.</li>
+        </ul>
+      </section>
+
+      <section>
+        <div class="warn">
+          <h2>Before you drink</h2>
+          <p style="margin:0">The map is maintained by a community and comes with no guarantee. A fountain can be switched off in winter or out of order. Check any sign on site, and filter or treat spring water if you are unsure.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>Spotted a mistake?</h2>
+        <p>Every point links to OpenStreetMap. Fix it there, or add a missing fountain, and SipMap will pick up the change within a week. Everyone who uses OpenStreetMap benefits too.</p>
+      </section>
+
+      <section>
+        <h2>Credits</h2>
+        <ul>
+          <li>Map data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a>, available under the Open Database License.</li>
+          <li>Base map by <a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> and <a href="https://www.openmaptiles.org/" target="_blank" rel="noopener">OpenMapTiles</a>, rendered with <a href="https://maplibre.org" target="_blank" rel="noopener">MapLibre</a>.</li>
+          <li>Source code and the water point data on <a href="https://github.com/P13K/sipmap" target="_blank" rel="noopener">GitHub</a>.</li>
+        </ul>
+        <a class="cta" href="./">Open the map</a>
+      </section>
+    </div>
+    <p class="foot">SipMap is a free, independent project.</p>
+  </main>
+</body>
+</html>
