@@ -1,5 +1,7 @@
 name: Construire et publier la carte
 
+# Lundi (et lancement manuel) : on retélécharge OpenStreetMap et on reconstruit les points d'eau.
+# Push sur main (changement d'interface) : on réutilise les dernières données en cache, déploiement en ~1 min.
 on:
   push:
     branches: [main]
@@ -11,10 +13,11 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  actions: write # pour enregistrer les données en cache
 
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -25,11 +28,29 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      - name: Récupérer les dernières données en cache
+        id: data-cache
+        if: github.event_name == 'push'
+        uses: actions/cache/restore@v6
+        with:
+          path: site/data
+          key: water-data-none
+          restore-keys: water-data-
+
       - name: Installer osmium
+        if: steps.data-cache.outputs.cache-matched-key == ''
         run: sudo apt-get update -q && sudo apt-get install -y -q osmium-tool
 
       - name: Construire les données des points d'eau
+        if: steps.data-cache.outputs.cache-matched-key == ''
         run: bash scripts/build_data.sh
+
+      - name: Mettre les données en cache pour les prochains déploiements
+        if: steps.data-cache.outputs.cache-matched-key == ''
+        uses: actions/cache/save@v6
+        with:
+          path: site/data
+          key: water-data-${{ github.run_id }}
 
       - uses: actions/configure-pages@v6
 
