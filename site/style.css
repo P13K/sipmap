@@ -102,6 +102,13 @@ button { font: inherit; color: inherit; }
 .menu-item:hover { background: var(--accent-soft); }
 .menu-item svg { width: 20px; height: 20px; flex: none; fill: none; stroke: var(--accent); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 
+/* « Offrir un café » : séparé des réglages, teinte café discrète */
+.menu-item.coffee { margin-top: 4px; position: relative; }
+.menu-item.coffee::before { content: ""; position: absolute; top: -3px; left: 12px; right: 12px; border-top: 1px solid var(--line); }
+.menu-item.coffee svg { stroke: #a8692a; }
+.menu-item.coffee:hover { background: #fbf1e4; }
+.menu-item small { display: block; margin-top: 1px; font-size: 12.5px; font-weight: 400; color: var(--muted); }
+
 /* Fenêtre « Ajouter à l'écran d'accueil » */
 .dialog {
   width: min(360px, calc(100% - 32px));

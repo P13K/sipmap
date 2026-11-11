@@ -25,6 +25,10 @@ Points affichés, tels qu'OSM les déclare :
 
 Pour couvrir d'autres pays, ajouter leurs chemins Geofabrik dans `REGIONS` (`.github/workflows/deploy.yml`), par exemple `europe/italy`. Le monde entier demandera de traiter le fichier planète sur une machine plus grosse qu'un runner GitHub gratuit.
 
+## Dons
+
+Le lien « Offrir un café » (menu et page À propos) se règle dans `site/config.js` : renseigner `SIPMAP_DONATE_URL` avec l'adresse de la page Ko-fi. Tant qu'il est vide, les boutons restent masqués. Simple lien, aucun script tiers ni cookie.
+
 ## En local
 
 ```bash

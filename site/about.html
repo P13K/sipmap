@@ -6,6 +6,15 @@
   <title>About SipMap</title>
   <meta name="description" content="SipMap shows drinking water points around you on a clean map, using OpenStreetMap data. Built for hikers, trail runners, runners and cyclists.">
   <meta name="theme-color" content="#0b6bd3">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="SipMap">
+  <meta property="og:title" content="About SipMap — drinking water near you">
+  <meta property="og:description" content="Fountains, taps and springs around you on a clean map, straight from OpenStreetMap. For hikers, trail runners and cyclists. Free, no account.">
+  <meta property="og:url" content="https://p13k.github.io/sipmap/about.html">
+  <meta property="og:image" content="https://p13k.github.io/sipmap/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -98,6 +107,19 @@
       font-weight: 600;
       text-decoration: none;
     }
+    .support {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      padding: 16px;
+      background: #fbf1e4;
+      border-radius: 12px;
+    }
+    .support-cup { width: 40px; height: 40px; flex: none; fill: none; stroke: #a8692a; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+    .support h2 { color: #4a2f12; }
+    .support p { color: #5a4128; }
+    .cta-coffee { background: #a8692a; }
+    .fine { margin: 10px 0 0; font-size: 13px; color: var(--muted); }
     .foot { max-width: 640px; margin: 16px auto 0; color: var(--muted); font-size: 13px; text-align: center; }
     .foot a { color: inherit; }
   </style>
@@ -164,6 +186,18 @@
         <p>Every point links to OpenStreetMap. Fix it there, or add a missing fountain, and SipMap will pick up the change within a week. Everyone who uses OpenStreetMap benefits too.</p>
       </section>
 
+      <section data-donate hidden>
+        <div class="support">
+          <svg class="support-cup" viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 10h11v3.5a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5z"/><path d="M15.5 11.5h1.3a2.3 2.3 0 0 1 0 4.6h-1.6"/><path d="M8.3 3.8c-.9 1.1.9 2.1 0 3.2M11.7 3.8c-.9 1.1.9 2.1 0 3.2"/></svg>
+          <div>
+            <h2>Keep SipMap free</h2>
+            <p>SipMap has no ads, no account and no tracking, and it will stay that way. It is built and run by one person, in spare time. If it helped you refill on a long day out, you can buy me a coffee.</p>
+            <a class="cta cta-coffee" data-donate-link href="#" target="_blank" rel="noopener">Buy me a coffee</a>
+            <p class="fine">Payments go through Ko-fi. SipMap never sees your card details.</p>
+          </div>
+        </div>
+      </section>
+
       <section>
         <h2>Credits</h2>
         <ul>
@@ -176,5 +210,6 @@
     </div>
     <p class="foot">SipMap is a free, independent project.</p>
   </main>
+  <script src="config.js"></script>
 </body>
 </html>

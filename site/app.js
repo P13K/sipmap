@@ -483,6 +483,8 @@
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') setMenu(false);
   });
+  // Le lien « Offrir un café » s'ouvre dans un nouvel onglet : on referme le menu derrière lui.
+  menu.querySelectorAll('[data-donate-link]').forEach((a) => a.addEventListener('click', () => setMenu(false)));
 
   // ---------- Ajouter à l'écran d'accueil ----------
   // Android / Chrome : vraie invite d'installation. iPhone / iPad : pas d'API, on affiche la marche à suivre.
