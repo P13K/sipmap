@@ -2,15 +2,23 @@
 (() => {
   'use strict';
 
-  const TYPES = {
-    fontaine:    { label: 'Fontaine',                   color: '#0b6bd3' },
-    robinet:     { label: 'Robinet',                    color: '#0aa0c8' },
-    source:      { label: 'Source',                     color: '#13926b' },
-    toilettes:   { label: 'Toilettes avec eau potable', color: '#7a5cc9', short: 'Toilettes' },
-    remplissage: { label: 'Point de remplissage',       color: '#0b3f86', short: 'Remplissage' },
-    puits:       { label: 'Puits',                      color: '#9a6b2f' },
-    autre:       { label: "Point d'eau potable",        color: '#5f6f7d', short: 'Autre' },
+  // Textes traduits (i18n.js) : anglais, français ou espagnol selon la langue du téléphone.
+  const { t: tr, formatDistance, formatDate } = window.SipMapI18n;
+
+  const TYPE_COLORS = {
+    fontaine: '#0b6bd3',
+    robinet: '#0aa0c8',
+    source: '#13926b',
+    toilettes: '#7a5cc9',
+    remplissage: '#0b3f86',
+    puits: '#9a6b2f',
+    autre: '#5f6f7d',
   };
+  const SHORT_LABELS = ['toilettes', 'remplissage', 'autre'];
+  const TYPES = {};
+  for (const [key, color] of Object.entries(TYPE_COLORS)) {
+    TYPES[key] = { label: tr(`type_${key}`), color, short: SHORT_LABELS.includes(key) ? tr(`short_${key}`) : undefined };
+  }
   // Fond de carte OpenFreeMap « liberty », recoloré façon carte IGN : forêts vertes, eau bleue, sable jaune.
   const STYLE_URL = 'https://tiles.openfreemap.org/styles/liberty';
   const PALETTE = {
@@ -188,7 +196,7 @@
     updateNearest();
   });
   geolocate.on('error', () => {
-    showNotice('Position indisponible : la liste se base sur le centre de la carte.', 5000);
+    showNotice(tr('posUnavailable'), 5000);
     updateNearest();
   });
 
@@ -228,9 +236,10 @@
       const r = await fetch('data/index.json', { cache: 'no-cache' });
       if (!r.ok) throw new Error(String(r.status));
       index = await r.json();
-      $('dataDate').textContent = ` · ${formatDate(index.generated)}`;
+      const date = formatDate(index.generated);
+      $('dataDate').textContent = date ? ` · ${date}` : '';
     } catch (_) {
-      showNotice("Données indisponibles pour l'instant. Réessaie dans quelques minutes.");
+      showNotice(tr('dataUnavailable'));
     }
   }
   const indexReady = loadIndex();
@@ -264,7 +273,7 @@
       if (keys.length <= MAX_CELLS) await loadCells(keys);
       if (noticeKind === 'zoom') hideNotice();
     } else if (!noticeKind) {
-      showNotice('Zoome pour afficher les points d’eau.', 0, 'zoom');
+      showNotice(tr('zoomIn'), 0, 'zoom');
     }
     if (!userPos) updateNearest();
   }
@@ -282,7 +291,7 @@
     const run = ++nearestRun;
     const fromUser = Boolean(userPos);
     if (!fromUser && map.getZoom() < MIN_DATA_ZOOM) {
-      renderNearest([], 'Zoome ou active ta position');
+      renderNearest([], tr('zoomOrLocate'));
       return;
     }
     const ref = fromUser ? userPos : map.getCenter().toArray();
@@ -294,7 +303,7 @@
       for (const f of cells.get(k) || []) found.push({ f, d: distance(ref, f.geometry.coordinates) });
     }
     found.sort((a, b) => a.d - b.d);
-    renderNearest(found.slice(0, NEAREST_COUNT), fromUser ? 'Autour de toi' : 'Autour du centre de la carte');
+    renderNearest(found.slice(0, NEAREST_COUNT), fromUser ? tr('aroundYou') : tr('aroundCenter'));
   }
 
   function renderNearest(items, sub) {
@@ -305,7 +314,7 @@
     if (!items.length) {
       const li = document.createElement('li');
       li.className = 'near-empty';
-      li.textContent = index ? 'Aucun point d’eau connu dans les 30 km.' : 'Chargement des données…';
+      li.textContent = index ? tr('noneNear') : tr('loading');
       list.append(li);
       return;
     }
@@ -345,10 +354,12 @@
   }
 
   // ---------- Fiche ----------
-  const SEASONAL = { yes: 'Saisonnier, peut être coupé l’hiver', no: 'Toute l’année', summer: 'L’été seulement', spring: 'Au printemps', autumn: 'En automne', winter: 'L’hiver seulement' };
-  const FEE = { yes: 'Payant', no: 'Gratuit' };
-  const BOTTLE = { yes: 'Remplissage de gourde facile', no: 'Peu pratique pour remplir une gourde' };
-  const ACCESS = { customers: 'Réservé aux clients', permissive: 'Accès toléré', destination: 'Accès riverains', permit: 'Sur autorisation' };
+  // Valeurs de tags OSM connues -> texte traduit ; une valeur inconnue est affichée telle quelle.
+  const known = (prefix, values) => Object.fromEntries(values.map((v) => [v, tr(`${prefix}_${v}`)]));
+  const SEASONAL = known('seasonal', ['yes', 'no', 'summer', 'spring', 'autumn', 'winter']);
+  const FEE = known('fee', ['yes', 'no']);
+  const BOTTLE = known('bottle', ['yes', 'no']);
+  const ACCESS = known('access', ['customers', 'permissive', 'destination', 'permit']);
   const OSM_KIND = { n: 'node', w: 'way', r: 'relation' };
 
   function openCard(p, coords) {
@@ -371,15 +382,15 @@
     if (userPos) {
       const dist = document.createElement('p');
       dist.className = 'card-dist';
-      dist.textContent = `À ${formatDistance(distance(userPos, coords))} de toi, à vol d’oiseau`;
+      dist.textContent = tr('distFromYou', { d: formatDistance(distance(userPos, coords)) });
       root.append(dist);
     }
 
     const facts = [];
-    if (p.seasonal) facts.push(SEASONAL[p.seasonal] || `Saisonnier : ${p.seasonal}`);
-    if (p.fee) facts.push(FEE[p.fee] || `Tarif : ${p.fee}`);
-    if (p.bottle) facts.push(BOTTLE[p.bottle] || `Gourde : ${p.bottle}`);
-    if (p.opening_hours) facts.push(`Horaires : ${p.opening_hours}`);
+    if (p.seasonal) facts.push(SEASONAL[p.seasonal] || tr('seasonalOther', { v: p.seasonal }));
+    if (p.fee) facts.push(FEE[p.fee] || tr('feeOther', { v: p.fee }));
+    if (p.bottle) facts.push(BOTTLE[p.bottle] || tr('bottleOther', { v: p.bottle }));
+    if (p.opening_hours) facts.push(tr('hours', { v: p.opening_hours }));
     if (p.access && ACCESS[p.access]) facts.push(ACCESS[p.access]);
     if (p.description) facts.push(p.description);
     if (facts.length) {
@@ -399,7 +410,7 @@
     go.href = `https://www.google.com/maps/dir/?api=1&destination=${coords[1]},${coords[0]}&travelmode=walking`;
     go.target = '_blank';
     go.rel = 'noopener';
-    go.textContent = 'Rejoindre ce point d’eau';
+    go.textContent = tr('getThere');
     root.append(go);
 
     const id = String(p.i || '');
@@ -410,7 +421,7 @@
       link.href = `https://www.openstreetmap.org/${kindOsm}/${id.slice(1)}`;
       link.target = '_blank';
       link.rel = 'noopener';
-      link.textContent = 'Voir ou corriger sur OpenStreetMap ↗';
+      link.textContent = tr('osmLink');
       root.append(link);
     }
 
@@ -457,14 +468,7 @@
     noticeKind = null;
   }
 
-  function formatDistance(m) {
-    if (m < 1000) return `${Math.max(10, Math.round(m / 10) * 10)} m`;
-    return `${(m / 1000).toFixed(m < 10000 ? 1 : 0).replace('.', ',')} km`;
-  }
-  function formatDate(iso) {
-    const [y, mo, d] = String(iso || '').split('-');
-    return y && mo && d ? `${d}/${mo}/${y}` : '';
-  }
+  // formatDistance et formatDate viennent de i18n.js (séparateur décimal et date selon la langue).
 
   // ---------- Menu ----------
   const menuBtn = $('menuBtn');
@@ -507,14 +511,14 @@
   function showInstallHelp() {
     const steps = $('installSteps');
     if (isIOS) {
-      steps.innerHTML = `<p>Dans Safari :</p><ol>
-        <li>Touche le bouton Partager ${SHARE_ICON} en bas de l’écran.</li>
-        <li>Choisis « Sur l’écran d’accueil ».</li>
-        <li>Touche « Ajouter » en haut à droite.</li></ol>`;
+      steps.innerHTML = `<p>${tr('iosIntro')}</p><ol>
+        <li>${tr('ios1', { icon: SHARE_ICON })}</li>
+        <li>${tr('ios2')}</li>
+        <li>${tr('ios3')}</li></ol>`;
     } else {
-      steps.innerHTML = `<p>Dans le menu de ton navigateur :</p><ol>
-        <li>Ouvre le menu (⋮ ou ☰).</li>
-        <li>Choisis « Ajouter à l’écran d’accueil » ou « Installer l’application ».</li></ol>`;
+      steps.innerHTML = `<p>${tr('otherIntro')}</p><ol>
+        <li>${tr('other1')}</li>
+        <li>${tr('other2')}</li></ol>`;
     }
     const dialog = $('installDialog');
     if (typeof dialog.showModal === 'function') dialog.showModal();

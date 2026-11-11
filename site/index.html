@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -24,10 +24,10 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="map" aria-label="Carte des points d'eau potable"></div>
+  <div id="map" aria-label="Map of drinking water points" data-i18n-aria="mapLabel"></div>
 
   <header class="topbar">
-    <button id="menuBtn" class="icon-btn" type="button" aria-label="Menu" aria-expanded="false" aria-controls="menu">
+    <button id="menuBtn" class="icon-btn" type="button" aria-label="Menu" data-i18n-aria="menu" aria-expanded="false" aria-controls="menu">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
     </button>
     <div class="brand-mark">
@@ -36,41 +36,41 @@
     </div>
   </header>
 
-  <nav id="menu" class="menu" aria-label="Menu" hidden>
+  <nav id="menu" class="menu" aria-label="Menu" data-i18n-aria="menu" hidden>
     <button id="installBtn" class="menu-item" type="button">
       <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M12 8v7M8.8 11.8 12 15l3.2-3.2"/></svg>
-      <span>Ajouter à l’écran d’accueil</span>
+      <span data-i18n="install">Add to home screen</span>
     </button>
     <a class="menu-item" href="about.html">
       <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg>
-      <span>À propos de SipMap</span>
+      <span data-i18n="about">About SipMap</span>
     </a>
     <a class="menu-item coffee" data-donate data-donate-link href="#" target="_blank" rel="noopener" hidden>
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 10h11v3.5a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5z"/><path d="M15.5 11.5h1.3a2.3 2.3 0 0 1 0 4.6h-1.6"/><path d="M8.3 3.8c-.9 1.1.9 2.1 0 3.2M11.7 3.8c-.9 1.1.9 2.1 0 3.2"/></svg>
-      <span>Offrir un café<small>SipMap est gratuit, sans pub</small></span>
+      <span><span data-i18n="coffee">Buy me a coffee</span><small data-i18n="coffeeSub">SipMap is free, with no ads</small></span>
     </a>
   </nav>
 
   <dialog id="installDialog" class="dialog" aria-labelledby="installTitle">
-    <h2 id="installTitle">Ajouter SipMap à l’écran d’accueil</h2>
+    <h2 id="installTitle" data-i18n="installTitle">Add SipMap to your home screen</h2>
     <div id="installSteps"></div>
-    <button id="installClose" class="dialog-btn" type="button">Compris</button>
+    <button id="installClose" class="dialog-btn" type="button" data-i18n="gotIt">Got it</button>
   </dialog>
 
   <div id="notice" class="notice" role="status" hidden></div>
 
-  <section id="sheet" class="sheet" aria-label="Points d'eau les plus proches">
+  <section id="sheet" class="sheet" aria-label="Nearest water points" data-i18n-aria="nearestAria">
     <button id="sheetToggle" class="sheet-head" type="button" aria-expanded="false" aria-controls="sheetBody">
       <span class="sheet-heading">
-        <span class="sheet-title">Les plus proches</span>
-        <span class="sheet-sub" id="sheetSub">Recherche de ta position…</span>
+        <span class="sheet-title" data-i18n="nearest">Nearest</span>
+        <span class="sheet-sub" id="sheetSub" data-i18n="locating">Finding your location…</span>
       </span>
       <span class="sheet-first" id="sheetFirst"></span>
       <svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg>
     </button>
     <div id="sheetBody" class="sheet-body" hidden>
       <ol id="nearList" class="near"></ol>
-      <ul id="legend" class="legend" aria-label="Légende"></ul>
+      <ul id="legend" class="legend" aria-label="Legend" data-i18n-aria="legend"></ul>
     </div>
   </section>
 
@@ -81,6 +81,7 @@
   </footer>
 
   <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+  <script src="i18n.js"></script>
   <script src="config.js"></script>
   <script src="app.js"></script>
 </body>

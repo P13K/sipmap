@@ -2,7 +2,7 @@
 
 // Lien de la page de dons (Ko-fi). Exemple : 'https://ko-fi.com/sipmap'
 // Tant qu'il est vide, les boutons « Offrir un café » restent masqués.
-window.SIPMAP_DONATE_URL = '';
+window.SIPMAP_DONATE_URL = 'https://ko-fi.com/sipmanpierrick';
 
 (function () {
   const url = window.SIPMAP_DONATE_URL;
