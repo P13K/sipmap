@@ -2,6 +2,7 @@ name: Construire et publier la carte
 
 # Lundi (et lancement manuel) : on retélécharge OpenStreetMap et on reconstruit les points d'eau.
 # Push sur main (changement d'interface) : on réutilise les dernières données en cache, déploiement en ~1 min.
+# Si la liste des pays (REGIONS) ou les scripts changent, le cache ne correspond plus : reconstruction complète.
 on:
   push:
     branches: [main]
@@ -22,11 +23,20 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 340
     env:
-      # Extraits Geofabrik à traiter (chemins de download.geofabrik.de, sans -latest.osm.pbf)
-      REGIONS: europe/spain europe/france
+      # Extraits Geofabrik à traiter (chemins de download.geofabrik.de, sans -latest.osm.pbf).
+      # Les Canaries sont rangées sous « africa » chez Geofabrik, les Açores à part du Portugal.
+      REGIONS: >-
+        europe/france europe/spain africa/canary-islands europe/portugal europe/azores
+        europe/italy europe/switzerland europe/belgium
+        europe/andorra europe/monaco europe/luxembourg europe/liechtenstein
     steps:
       - uses: actions/checkout@v7
+
+      - name: Clé de cache (pays + scripts)
+        id: key
+        run: echo "k=$(echo "$REGIONS" | sha1sum | cut -c1-10)-${{ hashFiles('scripts/**') }}" >> "$GITHUB_OUTPUT"
 
       - name: Récupérer les dernières données en cache
         id: data-cache
@@ -34,8 +44,8 @@ jobs:
         uses: actions/cache/restore@v6
         with:
           path: site/data
-          key: water-data-none
-          restore-keys: water-data-
+          key: water-${{ steps.key.outputs.k }}-none
+          restore-keys: water-${{ steps.key.outputs.k }}-
 
       - name: Installer osmium
         if: steps.data-cache.outputs.cache-matched-key == ''
@@ -50,7 +60,7 @@ jobs:
         uses: actions/cache/save@v6
         with:
           path: site/data
-          key: water-data-${{ github.run_id }}
+          key: water-${{ steps.key.outputs.k }}-${{ github.run_id }}
 
       - uses: actions/configure-pages@v6
 

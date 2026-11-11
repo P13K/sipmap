@@ -33,6 +33,9 @@ for region in $REGIONS; do
   osmium export "$WORK/$name-eau.osm.pbf" \
     -f geojsonseq --add-unique-id=type_id \
     -o "$WORK/$name-eau.geojsonseq" --overwrite
+
+  # Sur GitHub Actions, on libère le disque : l'extrait complet (jusqu'à 4,4 Go pour la France) ne sert plus.
+  if [ -n "${CI:-}" ]; then rm -f "$pbf"; fi
 done
 
 echo "→ Découpage en cellules"

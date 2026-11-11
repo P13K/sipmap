@@ -6,10 +6,12 @@ Une carte simple et belle des points d'eau potable OpenStreetMap autour de soi, 
 
 ## Comment ça marche
 
-1. Chaque lundi (ou sur lancement manuel), l'Action GitHub télécharge les extraits OpenStreetMap de [Geofabrik](https://download.geofabrik.de) listés dans `REGIONS`.
+1. Chaque lundi (ou sur lancement manuel), l'Action GitHub télécharge les extraits OpenStreetMap de [Geofabrik](https://download.geofabrik.de) listés dans `REGIONS` : France, Espagne (+ Canaries), Portugal (+ Açores), Italie, Suisse, Belgique, Luxembourg, Andorre, Monaco, Liechtenstein. Compter 2 à 3 h, l'essentiel étant le téléchargement.
 2. `osmium` ne garde que les points d'eau potable ; `scripts/points.py` les range en petites cellules de 1° × 1° (`site/data/c/<lat>_<lon>.json`).
 3. Le site statique (`site/`) est publié sur GitHub Pages. Le navigateur ne charge que les cellules visibles.
-4. Un push sur `main` (changement d'interface) réutilise les dernières données mises en cache : déploiement en une minute environ.
+4. Un push sur `main` (changement d'interface) réutilise les dernières données mises en cache : déploiement en une minute environ. Si `REGIONS` ou les scripts changent, le cache ne correspond plus et les données sont reconstruites.
+
+L'interface est en anglais, français et espagnol selon la langue du téléphone (`site/i18n.js`, test avec `?lang=fr`).
 
 Points affichés, tels qu'OSM les déclare :
 
